@@ -200,8 +200,8 @@ class PDFInvoiceCreator:
 
         return my_string
 
-    def create_tex(self):
-        with open(self.path / "invoice_test.tex", "w", encoding="utf-8") as f:
+    def create_tex_rot(self):
+        with open(self.path / "invoice.tex", "w", encoding="utf-8") as f:
             f.write(
                 "\\documentclass[PDF11pt]{article}\n"
                 "\\setlength{\\headheight}{14pt}\n"
@@ -301,13 +301,107 @@ class PDFInvoiceCreator:
                 "\\end{document}\n"
             )
 
+    def create_tex(self):
+        with open(self.path / "invoice.tex", "w", encoding="utf-8") as f:
+            f.write(
+                "\\documentclass[PDF11pt]{article}\n"
+                "\\setlength{\\headheight}{14pt}\n"
+                "\\usepackage[left=0.75in,right=0.75in,bottom=0.75in,top=0.25in]{geometry}\n"
+                "\\usepackage[utf8]{inputenc}\n"
+                "\\usepackage[swedish]{babel}\n"
+                "\\usepackage{tabularx}\n"
+                "\\usepackage{microtype}\n"
+                "\\usepackage{lastpage}\n"
+                "\\usepackage{tcolorbox}\n"
+                "\\tcbuselibrary{raster, skins}\n"
+                "\\usepackage{fancyhdr}\n"
+                "\\pagestyle{fancy}\n"
+                "\\usepackage{booktabs} % for table toprule and bottomrule\n"
+                "\\newcolumntype{L}[1]{>{\\hsize=#1\\hsize\\raggedright\\arraybackslash}X}\n"
+                "\\newcolumntype{R}[1]{>{\\hsize=#1\\hsize\\raggedleft\\arraybackslash}X}\n"
+                "\\newcolumntype{C}[1]{>{\\hsize=#1\\hsize\\centering\\arraybackslash}X}\n"
+                "\\cfoot{}\n"
+                "\\rfoot{\\thepage{} av \\pageref{LastPage}}\n"
+                "\\begin{document}\n"
+                "\\begin{tcbraster}[raster columns=2, top=0em, noparskip, raster valign=top, raster force size=false]\n"
+                "\\begin{tcolorbox}[blankest, fontupper=\\huge, top=0pt,valign=center, height=3.1cm,left=0.2cm]\n"
+                f"\\huge{{{self.get_company_name()}}}\n"
+                "\\end{tcolorbox}\n"
+                "\\begin{tcboxeditemize}[raster columns=2, raster equal height]{blankest}\n"
+                "\\tcbitem[raster multicolumn=2, colback=white, top=5pt,valign=center,left=0pt,halign=center] \\huge{Faktura}\n"
+                f"\\tcbitem[colback=white] \\textbf{{Fakturanummer}} \\\\ {self.get_invoice_number()+1000}\n"
+                f"\\tcbitem[colback=white] \\textbf{{Fakturadatum}} \\\\ {self.invoice.my_date}\n"
+                "\\end{tcboxeditemize}\n"
+                "\\end{tcbraster}\n"
+                "\\begin{tcbraster}[raster columns=2, top=0em, noparskip, raster valign=top, raster force size=false]\n"
+                "\\begin{tcolorbox}[blankest]\n"
+                "\\textbf{Fakturaadress:} \\\\\n"
+                f"{self.invoice.customer.name} \\\\\n"
+                f"{self.invoice.customer.address} \\\\\n"
+                f"{self.invoice.customer.zip_code} {self.invoice.customer.city}\n"
+                "\\end{tcolorbox}\n"
+                "\\begin{tcolorbox}[blankest]\n"
+                f"\\textbf{{Er referens:}}  {self.invoice.customer.name} \\\\\n"
+                f"\\textbf{{Vår referens:}} {self.invoice.company.manager}   \\\\\n"
+                f"\\textbf{{Betalningsvilkor:}} {self.invoice.due_days} dagar            \\\\\n"
+                f"\\textbf{{Förfallodag:}} {self.invoice.due_date}   \n"
+                "\\end{tcolorbox}\n"
+                "\\end{tcbraster}\n"
+                "\\vspace{0.5cm}\n"
+                "\\renewcommand{\\arraystretch}{1.25}\n"
+                "\\noindent\n"
+                "\\begin{tabularx}{\\textwidth}{  C{0.3}  L{2.9}  C{0.7}  C{0.35} C{0.75}  }\n"
+                "\\toprule\n"
+                "\\textbf{Post} & \\textbf{Benämning}         & \\textbf{\\`A-pris} & \\textbf{Antal} & \\textbf{Summa} \\\\ \\midrule\n"
+                "\\end{tabularx}\n"
+                "\\begin{tabularx}{\\textwidth}{  C{0.3}  L{2.9}  R{0.7}  C{0.35} R{0.75}  }\n"
+                f"{self.get_items()}\n"
+                "\\end{tabularx}\n"
+                "\\vfill\n"
+                "\\noindent\n"
+                "\\begin{tabularx}{\\textwidth}{  L{1.5}  R{1} R{0.5}  }\n"
+                f" & Fakturans totala belopp & {self.invoice.return_total_cost_before_rot()} kr \\\\ \n"
+                "\\end{tabularx}\n"
+                "\\noindent\n"
+                "\\begin{tabularx}{\\textwidth}{  L{0.5}  L{0.25}  L{0.5} R{1.75}  }\n"
+                "\\midrule\n"
+                "\\textbf{Exkl. moms} & \\textbf{Moms} & \\textbf{Moms kr} & \\textbf{Att betala} \\\\\n"
+                f"{self.invoice.return_items_total()} kr          & 25\\%          & {self.invoice.return_tax()} kr       & {self.invoice.return_total()} kr          \\\\\n"
+                "\\bottomrule\n"
+                "\end{tabularx}\n"
+                "\\vspace{0.5cm}\n"
+                "\\begin{tcbraster}[raster columns=4, top=0em, noparskip, raster valign=top, raster force size=false]\n"
+                "\\begin{tcolorbox}[blankest]\n"
+                "\\textbf{Adress} \\\\\n"
+                "Magnus Thomsson \\\\\n"
+                "Tallundsgatan 8  \\\\\n"
+                "621 58~~Visby     \n"
+                "\\end{tcolorbox}\n"
+                "\\begin{tcolorbox}[blankest]\n"
+                "\\textbf{Betalningsuppgifter} \\\\\n"
+                "Bankgiro: 5498-7219  \\\\ \n"
+                "Bank: Swedbank\n"
+                "\\end{tcolorbox}\n"
+                "\\begin{tcolorbox}[blankest]\n"
+                "\\textbf{Kontakt} \\\\\n"
+                "0739 73 61 24\n"
+                "\\end{tcolorbox}\n"
+                "\\begin{tcolorbox}[blankest]\n"
+                "\\textbf{Momsreg.nr} \\\\ \n"
+                "SE660928321001 \\\\ \n"
+                "Godkänd för F-skatt\n"
+                "\\end{tcolorbox}\n"
+                "\\end{tcbraster}\n"
+                "\\end{document}\n"
+            )
+
     def run_latexmk(self, name):
         os.system(
-            f'latexmk -output-directory="{self.path}\output" -pdf {self.path}\invoice_test.tex -silent'
+            f'latexmk -output-directory="{self.path}\output" -pdf {self.path}\invoice.tex -silent'
         )
         copyfile(
-            Path(f"{self.path}/output/invoice_test.pdf"),
-            Path(f"D:/Projects/Invoice/{name}.pdf"),
+            Path(f"{self.path}/output/invoice.pdf"),
+            Path(f"D:/Projects/Invoicev2/{name}.pdf"),
         )
 
 
@@ -334,7 +428,7 @@ def main(args=None):
     my_work = PDFWork("Arbetstid", 3, 450)
     my_invoice = PDFInvoice(my_customer, [my_item, my_item1], my_company, my_work)
     invoice = PDFInvoiceCreator(my_invoice, args.path)
-    invoice.create_tex()
+    invoice.create_tex_rot()
     invoice.run_latexmk()
 
 

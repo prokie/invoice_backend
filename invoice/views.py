@@ -5,14 +5,8 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .invoice import (
-    PDFCompany,
-    PDFInvoice,
-    PDFInvoiceCreator,
-    PDFInvoiceCustomer,
-    PDFItem,
-    PDFWork,
-)
+from .invoice import (PDFCompany, PDFInvoice, PDFInvoiceCreator,
+                      PDFInvoiceCustomer, PDFItem, PDFWork)
 from .models import Customer, Invoice
 from .serializers import CustomerSerializer, InvoiceSerializer
 
@@ -173,8 +167,14 @@ def update_invoice(request, pk):
         rot=data["rot"],
     )
 
-    pdf_invoice = PDFInvoiceCreator(my_invoice, Path("D:/Projects/Invoice/latex"))
-    pdf_invoice.create_tex()
+    pdf_invoice = PDFInvoiceCreator(my_invoice, Path("D:/Projects/Invoicev2/latex"))
+
+    print(my_invoice.rot)
+    if my_invoice.rot:
+        pdf_invoice.create_tex_rot()
+    else:
+        pdf_invoice.create_tex()
+
     pdf_invoice.run_latexmk(invoice.name)
     serializer = InvoiceSerializer(instance=invoice, data=request.data)
     if serializer.is_valid():
