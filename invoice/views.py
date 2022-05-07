@@ -124,7 +124,8 @@ def update_invoice(request, pk):
     item_list = []
 
     for item in data["items"]:
-        item_list.append(
+        if item["price"] and item["name"]:
+            item_list.append(
             PDFItem(
                 item["name"],
                 float(item["price"]),
@@ -167,9 +168,8 @@ def update_invoice(request, pk):
         rot=data["rot"],
     )
 
-    pdf_invoice = PDFInvoiceCreator(my_invoice, Path("D:/Projects/Invoicev2/latex"))
+    pdf_invoice = PDFInvoiceCreator(my_invoice, Path("C:/Invoice_Program/latex"))
 
-    print(my_invoice.rot)
     if my_invoice.rot:
         pdf_invoice.create_tex_rot()
     else:
