@@ -15,7 +15,7 @@ class Customer(models.Model):
     house = models.CharField(max_length=200, unique=True, blank=True, null=True)
     city = models.CharField(max_length=200)
     zip_code = models.CharField(max_length=200)
-    social_security = models.CharField(max_length=12, unique=True)
+    social_security = models.CharField(max_length=12, blank=True, null=True)
 
     def __str__(self) -> str:
         return str(self.name)
