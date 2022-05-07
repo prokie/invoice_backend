@@ -81,8 +81,16 @@ class PDFInvoice:
         self.due_days = due_days
         self.due_date = self.my_date + datetime.timedelta(days=self.due_days)
         self.work = work
-        self.start_date = datetime.date.fromisoformat(start_date)
-        self.end_date = datetime.date.fromisoformat(end_date)
+        self.start_date = (
+            datetime.date.fromisoformat(start_date)
+            if start_date
+            else datetime.date.today()
+        )
+        self.end_date = (
+            datetime.date.fromisoformat(end_date)
+            if start_date
+            else datetime.date.today()
+        )
         self.rot = rot
 
     def get_work_date(self):
@@ -401,7 +409,7 @@ class PDFInvoiceCreator:
         )
         copyfile(
             Path(f"{self.path}/output/invoice.pdf"),
-            Path(f"D:/Projects/Invoicev2/{name}.pdf"),
+            Path(f"C:/Users/Magnus/Downloads/{name}.pdf"),
         )
 
 
