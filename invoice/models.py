@@ -34,7 +34,7 @@ class Item(models.Model):
 
 class Invoice(models.Model):
     name = models.CharField(max_length=200, unique=True, blank=True, null=True)
-    customer = models.OneToOneField(
+    customer = models.ForeignKey(
         Customer, blank=True, null=True, on_delete=models.RESTRICT
     )
     invoice_number = models.CharField(max_length=20, unique=True, blank=True, null=True)
