@@ -49,6 +49,7 @@ class Invoice(models.Model):
         max_digits=10, decimal_places=2, blank=True, null=True
     )
     rot = models.BooleanField(default=False)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self) -> str:
         return self.name
