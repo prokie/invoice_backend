@@ -166,6 +166,7 @@ def update_invoice(request, pk):
         start_date=data["start_date"],
         end_date=data["end_date"],
         rot=data["rot"],
+        description=data["description"]
     )
 
     pdf_invoice = PDFInvoiceCreator(my_invoice, Path("C:/Invoice_Program/latex"))

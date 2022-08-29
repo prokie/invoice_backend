@@ -72,7 +72,9 @@ class PDFInvoice:
         start_date,
         end_date,
         rot,
+        description
     ):
+        self.description = description
         self.items = items
         self.number = number
         self.customer = customer
@@ -180,6 +182,13 @@ class PDFInvoice:
             + "-"
             + str(self.customer.social_security)[8:]
         )
+    
+    def get_description(self):
+        if self.description:
+            return f"\\begin{{tcolorbox}}[colback=white]\n{self.description}\n\\end{{tcolorbox}}\n"
+        return ""
+
+                
 
 
 class PDFInvoiceCreator:
@@ -264,6 +273,7 @@ class PDFInvoiceCreator:
                 "\\begin{tabularx}{\\textwidth}{  C{0.3}  L{2.9}  R{0.7}  C{0.35} R{0.75}  }\n"
                 f"{self.get_items()}\n"
                 "\\end{tabularx}\n"
+                f"{self.invoice.get_description()}"
                 "\\vfill\n"
                 "\\noindent\n"
                 "\\begin{tabularx}{\\textwidth}{  L{1.5}  R{1} R{0.5}  }\n"
@@ -366,6 +376,7 @@ class PDFInvoiceCreator:
                 f"{self.get_items()}\n"
                 "\\end{tabularx}\n"
                 "\\vfill\n"
+                f"{self.invoice.get_description()}"
                 "\\noindent\n"
                 "\\begin{tabularx}{\\textwidth}{  L{1.5}  R{1} R{0.5}  }\n"
                 f" & Fakturans totala belopp & {self.invoice.return_total_cost_before_rot()} kr \\\\ \n"
@@ -409,7 +420,7 @@ class PDFInvoiceCreator:
         )
         copyfile(
             Path(f"{self.path}/output/invoice.pdf"),
-            Path(f"C:/Users/Magnus/Downloads/{name}.pdf"),
+            Path(f"{os.path.expanduser('~')}/Downloads/{name}.pdf"),
         )
 
 
