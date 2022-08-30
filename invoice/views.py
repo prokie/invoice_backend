@@ -142,7 +142,7 @@ def update_invoice(request, pk):
         "0739736124",
         "Magnus Thomsson",
     )
-    my_work = PDFWork("Arbetstid", int(data["work_hour"]), float(data["work_price"]))
+    my_work = PDFWork("Arbetstid", float(data["work_hour"]), float(data["work_price"]))
     customer = Customer.objects.get(id=data["customer"])
     pdf_customer = PDFInvoiceCustomer(
         name=customer.name,
