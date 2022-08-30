@@ -9,9 +9,9 @@ from django.db import models
 # Create your models here.
 class Customer(models.Model):
     name = models.CharField(max_length=200, unique=True)
-    address = models.CharField(max_length=200, unique=True)
-    phone = models.CharField(max_length=200, unique=True)
-    email = models.CharField(max_length=200, unique=True)
+    address = models.CharField(max_length=200)
+    phone = models.CharField(max_length=200, blank=True, null=True)
+    email = models.CharField(max_length=200, blank=True, null=True)
     house = models.CharField(max_length=200, unique=True, blank=True, null=True)
     city = models.CharField(max_length=200)
     zip_code = models.CharField(max_length=200)
