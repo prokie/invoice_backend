@@ -203,7 +203,7 @@ class PDFInvoiceCreator:
         return self.invoice.number
 
     def get_items(self):
-        my_string = ""
+        
         self.invoice.items.append(
             PDFItem(
                 self.invoice.work.name,
@@ -212,9 +212,12 @@ class PDFInvoiceCreator:
                 "h",
             )
         )
+        my_string = "\\begin{tabularx}{\\textwidth}{  C{0.3}  L{2.9}  R{0.7}  C{0.35} R{0.75}  }\n"
         for index, item in enumerate(self.invoice.items, 1):
+            if not index % 34:
+                my_string += "\\end{tabularx}\n\\begin{tabularx}{\\textwidth}{  C{0.3}  L{2.9}  R{0.7}  C{0.35} R{0.75}  }\n"
             my_string += f"{index} &{item.name} & {item.get_price()} kr & {item.quantity} {item.unit}   & {item.get_total()} kr\\\\\n"
-
+        my_string += "\\end{tabularx}\n"
         return my_string
 
     def create_tex_rot(self):
@@ -270,9 +273,7 @@ class PDFInvoiceCreator:
                 "\\toprule\n"
                 "\\textbf{Post} & \\textbf{Benämning}         & \\textbf{\\`A-pris} & \\textbf{Antal} & \\textbf{Summa} \\\\ \\midrule\n"
                 "\\end{tabularx}\n"
-                "\\begin{tabularx}{\\textwidth}{  C{0.3}  L{2.9}  R{0.7}  C{0.35} R{0.75}  }\n"
                 f"{self.get_items()}\n"
-                "\\end{tabularx}\n"
                 f"{self.invoice.get_description()}"
                 "\\vfill\n"
                 "\\noindent\n"
@@ -372,9 +373,7 @@ class PDFInvoiceCreator:
                 "\\toprule\n"
                 "\\textbf{Post} & \\textbf{Benämning}         & \\textbf{\\`A-pris} & \\textbf{Antal} & \\textbf{Summa} \\\\ \\midrule\n"
                 "\\end{tabularx}\n"
-                "\\begin{tabularx}{\\textwidth}{  C{0.3}  L{2.9}  R{0.7}  C{0.35} R{0.75}  }\n"
                 f"{self.get_items()}\n"
-                "\\end{tabularx}\n"
                 "\\vfill\n"
                 f"{self.invoice.get_description()}"
                 "\\noindent\n"
