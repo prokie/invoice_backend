@@ -204,14 +204,15 @@ class PDFInvoiceCreator:
 
     def get_items(self):
         
-        self.invoice.items.append(
-            PDFItem(
-                self.invoice.work.name,
-                self.invoice.work.rate,
-                self.invoice.work.hours,
-                "h",
+        if self.invoice.work.hours > 0:
+            self.invoice.items.append(
+                PDFItem(
+                    self.invoice.work.name,
+                    self.invoice.work.rate,
+                    self.invoice.work.hours,
+                    "h",
+                )
             )
-        )
         my_string = "\\begin{tabularx}{\\textwidth}{  C{0.3}  L{2.9}  R{0.7}  C{0.35} R{0.75}  }\n"
         for index, item in enumerate(self.invoice.items, 1):
             if not index % 34:
